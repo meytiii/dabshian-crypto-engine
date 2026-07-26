@@ -10,6 +10,12 @@ const btnClear = document.getElementById('btnClear');
 const btnSwap = document.getElementById('btnSwap');
 const toggleKey = document.getElementById('toggleKey');
 const charCount = document.getElementById('charCount');
+const clockTime = document.getElementById('clockTime');
+const clockDate = document.getElementById('clockDate');
+const statEncrypted = document.getElementById('statEncrypted');
+const statDecrypted = document.getElementById('statDecrypted');
+const statTopAlgo = document.getElementById('statTopAlgo');
+const copyrightYear = document.getElementById('copyrightYear');
 
 function processCrypto(isEncrypting) {
     const text = inputText.value.trim();
@@ -25,11 +31,13 @@ function processCrypto(isEncrypting) {
         if (isEncrypting) {
             const encrypted = CryptoJS[algo].encrypt(text, key).toString();
             outputText.value = encrypted;
+            updateStats(text.length, 0, algo);
         } else {
             const decrypted = CryptoJS[algo].decrypt(text, key);
             const originalText = decrypted.toString(CryptoJS.enc.Utf8);
             if (!originalText) throw new Error("Invalid sequence");
             outputText.value = originalText;
+            updateStats(0, originalText.length, algo);
         }
     } catch (error) {
         outputText.value = "Error: Decryption failed. Invalid cipher payload, incorrect key, or wrong algorithm.";
@@ -66,30 +74,73 @@ btnCopy.addEventListener('click', async () => {
     }
 });
 
-// Dynamic Character Counter
 inputText.addEventListener('input', () => {
     const len = inputText.value.length;
     charCount.textContent = `${len} char${len === 1 ? '' : 's'}`;
 });
 
-// Toggle Secret Key Visibility
 toggleKey.addEventListener('click', () => {
     const isPassword = secretKey.type === 'password';
     secretKey.type = isPassword ? 'text' : 'password';
     toggleKey.innerHTML = isPassword ? '<i class="fa-solid fa-eye-slash"></i>' : '<i class="fa-solid fa-eye"></i>';
 });
 
-// Clear Text Areas
 btnClear.addEventListener('click', () => {
     inputText.value = '';
     outputText.value = '';
     charCount.textContent = '0 chars';
 });
 
-// Move Output Payload to Input Area
 btnSwap.addEventListener('click', () => {
     if (!outputText.value || outputText.value.startsWith("Error:")) return;
     inputText.value = outputText.value;
     outputText.value = '';
     charCount.textContent = `${inputText.value.length} chars`;
 });
+
+// Live Clock & Date
+function updateClock() {
+    const now = new Date();
+    
+    const timeOptions = { timeZone: 'Asia/Tehran', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+    const dateOptions = { timeZone: 'Asia/Tehran', month: 'short', day: 'numeric', year: 'numeric' };
+    
+    clockTime.textContent = now.toLocaleTimeString('en-US', timeOptions);
+    clockDate.textContent = now.toLocaleDateString('en-US', dateOptions);
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+copyrightYear.textContent = new Date().getFullYear();
+
+let stats = JSON.parse(localStorage.getItem('dabshian_crypto_stats')) || {
+    encrypted: 0,
+    decrypted: 0,
+    algos: {}
+};
+
+function renderStats() {
+    statEncrypted.textContent = stats.encrypted.toLocaleString();
+    statDecrypted.textContent = stats.decrypted.toLocaleString();
+    
+    let topAlgo = 'N/A';
+    let max = 0;
+    for (const [algo, count] of Object.entries(stats.algos)) {
+        if (count > max) {
+            max = count;
+            topAlgo = algo;
+        }
+    }
+    statTopAlgo.textContent = topAlgo;
+}
+
+function updateStats(encCount, decCount, algo) {
+    stats.encrypted += encCount;
+    stats.decrypted += decCount;
+    stats.algos[algo] = (stats.algos[algo] || 0) + 1;
+    
+    localStorage.setItem('dabshian_crypto_stats', JSON.stringify(stats));
+    renderStats();
+}
+
+renderStats();
