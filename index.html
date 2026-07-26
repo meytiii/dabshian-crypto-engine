@@ -12,6 +12,10 @@
 <body>
     <div class="background-animation"></div>
     <div class="container glass-panel">
+        <div class="header-top">
+            <div class="live-clock"><i class="fa-regular fa-clock"></i> <span id="clockTime">--:--:--</span></div>
+            <div class="live-date"><i class="fa-regular fa-calendar-days"></i> <span id="clockDate">--- --, ----</span></div>
+        </div>
         <h2 class="title"><i class="fa-solid fa-shield-halved"></i> Dabshian Crypto Engine</h2>
         
         <div class="input-group">
@@ -62,6 +66,25 @@
             </div>
             <textarea id="outputText" readonly placeholder="Awaiting execution..."></textarea>
         </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-value" id="statEncrypted">0</span>
+                <span class="stat-label"><i class="fa-solid fa-lock"></i> Encrypted</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="statDecrypted">0</span>
+                <span class="stat-label"><i class="fa-solid fa-lock-open"></i> Decrypted</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" id="statTopAlgo">N/A</span>
+                <span class="stat-label"><i class="fa-solid fa-chart-pie"></i> Top Algo</span>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; <span id="copyrightYear"></span> Dabshian Group. All rights reserved.</p>
+        </footer>
     </div>
     <script src="script.js"></script>
 </body>

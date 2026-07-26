@@ -18,8 +18,11 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
+    padding: 2rem 1rem;
+    box-sizing: border-box;
     background: #0f172a;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .background-animation {
@@ -70,7 +73,9 @@ body {
 .label-row {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     margin-bottom: 0.5rem;
 }
 
@@ -239,12 +244,21 @@ select {
 
 @media (max-width: 640px) {
     .glass-panel {
-        padding: 1.5rem;
+        padding: 1.25rem;
     }
     .controls {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
     .actions {
         flex-direction: column;
+        gap: 0.75rem;
+    }
+    .btn-group-sm {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    textarea {
+        min-height: 90px;
     }
 }
