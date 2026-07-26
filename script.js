@@ -123,6 +123,8 @@ btnSwap.addEventListener('click', () => {
 function updateClock() {
     const now = new Date();
     
+    now.setTime(now.getTime() + (60 * 60 * 1000));
+    
     const timeOptions = { timeZone: 'Asia/Tehran', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
     const dateOptions = { timeZone: 'Asia/Tehran', month: 'short', day: 'numeric', year: 'numeric' };
     
