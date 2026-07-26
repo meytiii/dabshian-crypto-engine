@@ -28,17 +28,17 @@ function processCrypto(isEncrypting) {
     }
 
     try {
+        let finalResult = "";
         if (isEncrypting) {
-            const encrypted = CryptoJS[algo].encrypt(text, key).toString();
-            outputText.value = encrypted;
+            finalResult = CryptoJS[algo].encrypt(text, key).toString();
             updateStats(text.length, 0, algo);
         } else {
             const decrypted = CryptoJS[algo].decrypt(text, key);
-            const originalText = decrypted.toString(CryptoJS.enc.Utf8);
-            if (!originalText) throw new Error("Invalid sequence");
-            outputText.value = originalText;
-            updateStats(0, originalText.length, algo);
+            finalResult = decrypted.toString(CryptoJS.enc.Utf8);
+            if (!finalResult) throw new Error("Invalid sequence");
+            updateStats(0, finalResult.length, algo);
         }
+        animateScramble(finalResult, outputText);
     } catch (error) {
         outputText.value = "Error: Decryption failed. Invalid cipher payload, incorrect key, or wrong algorithm.";
     }
@@ -47,16 +47,37 @@ function processCrypto(isEncrypting) {
 btnEncrypt.addEventListener('click', () => processCrypto(true));
 btnDecrypt.addEventListener('click', () => processCrypto(false));
 
+const toastContainer = document.getElementById('toastContainer');
+
+function showToast(message, isError = false) {
+    const toast = document.createElement('div');
+    toast.className = `toast ${isError ? 'error' : ''}`;
+    toast.innerHTML = `<i class="fa-solid ${isError ? 'fa-circle-exclamation' : 'fa-circle-check'}"></i> ${message}`;
+    
+    toastContainer.appendChild(toast);
+    
+    requestAnimationFrame(() => {
+        toast.classList.add('show');
+    });
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
 btnPaste.addEventListener('click', async () => {
     try {
         const text = await navigator.clipboard.readText();
+        if (!text) throw new Error("Clipboard is empty");
         inputText.value = text;
         
         const originalHtml = btnPaste.innerHTML;
         btnPaste.innerHTML = '<i class="fa-solid fa-check"></i> Pasted';
+        showToast("Payload pasted from clipboard");
         setTimeout(() => btnPaste.innerHTML = originalHtml, 1500);
     } catch (err) {
-        alert("Clipboard permission denied or unavailable.");
+        showToast("Clipboard permission denied or empty.", true);
     }
 });
 
@@ -68,9 +89,10 @@ btnCopy.addEventListener('click', async () => {
         
         const originalHtml = btnCopy.innerHTML;
         btnCopy.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
+        showToast("Payload copied to clipboard");
         setTimeout(() => btnCopy.innerHTML = originalHtml, 1500);
     } catch (err) {
-        alert("Failed to copy to clipboard.");
+        showToast("Failed to copy to clipboard.", true);
     }
 });
 
@@ -98,7 +120,6 @@ btnSwap.addEventListener('click', () => {
     charCount.textContent = `${inputText.value.length} chars`;
 });
 
-// Live Clock & Date
 function updateClock() {
     const now = new Date();
     
@@ -144,3 +165,52 @@ function updateStats(encCount, decCount, algo) {
 }
 
 renderStats();
+
+function animateScramble(finalText, element) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+    const iterations = 15;
+    let currentIteration = 0;
+    
+    const interval = setInterval(() => {
+        let scrambled = "";
+        for (let i = 0; i < finalText.length; i++) {
+            if (i < (currentIteration / iterations) * finalText.length) {
+                scrambled += finalText[i];
+            } else {
+                scrambled += chars[Math.floor(Math.random() * chars.length)];
+            }
+        }
+        element.value = scrambled;
+        
+        currentIteration++;
+        if (currentIteration > iterations) {
+            clearInterval(interval);
+            element.value = finalText;
+        }
+    }, 30);
+}
+
+particlesJS("particles-js", {
+    particles: {
+        number: { value: 60, density: { enable: true, value_area: 800 } },
+        color: { value: "#6366f1" },
+        shape: { type: "circle" },
+        opacity: { value: 0.5, random: false },
+        size: { value: 3, random: true },
+        line_linked: { enable: true, distance: 150, color: "#ec4899", opacity: 0.4, width: 1 },
+        move: { enable: true, speed: 2, direction: "none", random: false, straight: false, out_mode: "out", bounce: false }
+    },
+    interactivity: {
+        detect_on: "canvas",
+        events: {
+            onhover: { enable: true, mode: "grab" },
+            onclick: { enable: true, mode: "push" },
+            resize: true
+        },
+        modes: {
+            grab: { distance: 140, line_linked: { opacity: 1 } },
+            push: { particles_nb: 4 }
+        }
+    },
+    retina_detect: true
+});

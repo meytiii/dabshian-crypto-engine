@@ -8,9 +8,10 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 </head>
 <body>
-    <div class="background-animation"></div>
+    <div id="particles-js" class="background-animation"></div>
     <div class="container glass-panel">
         <div class="header-top">
             <div class="live-clock"><i class="fa-regular fa-clock"></i> <span id="clockTime">--:--:--</span></div>
@@ -86,6 +87,8 @@
             <p>&copy; <span id="copyrightYear"></span> Dabshian Group. All rights reserved.</p>
         </footer>
     </div>
+    
+    <div id="toastContainer" class="toast-container"></div>
     <script src="script.js"></script>
 </body>
 </html>
