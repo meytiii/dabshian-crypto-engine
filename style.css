@@ -208,7 +208,6 @@ select {
     border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* --- QoL Enhancements & Responsive Layout --- */
 .btn-group-sm {
     display: flex;
     gap: 0.5rem;
@@ -270,7 +269,6 @@ select {
     }
 }
 
-/* --- Live Header Clock & Date --- */
 .header-top {
     display: flex;
     justify-content: space-between;
@@ -289,7 +287,6 @@ select {
     font-family: monospace;
 }
 
-/* --- Dynamic Stats Grid --- */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -337,7 +334,6 @@ select {
     }
 }
 
-/* --- Dynamic Toast Notifications --- */
 .toast-container {
     position: fixed;
     bottom: 2rem;
@@ -380,7 +376,7 @@ select {
     vertical-align: middle;
     margin-right: 8px;
     border-radius: 50%;
-    box-shadow: 0 0 10px rgba(156, 39, 176, 0.5); /* Purple glow matching your palette */
+    box-shadow: 0 0 10px rgba(156, 39, 176, 0.5);
 }
 
 #glassPanel {
@@ -454,4 +450,18 @@ textarea::-webkit-scrollbar-track {
 @keyframes fa-spin {
     0% { transform: translate(-50%, -50%) rotate(0deg); }
     100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+#secretKey {
+    border-width: 2px;
+}
+
+#secretKey.valid-key {
+    border-color: #22c55e;
+    box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+}
+
+#secretKey.invalid-key {
+    border-color: #ef4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
 }

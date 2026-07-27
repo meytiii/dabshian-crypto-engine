@@ -45,11 +45,13 @@ function processCrypto(isEncrypting) {
 }
 
 function handleProcessing(button, isEncrypting) {
+    playSound('click');
     button.classList.add('loading');
     
     setTimeout(() => {
         processCrypto(isEncrypting);
         button.classList.remove('loading');
+        playSound('success');
     }, 600);
 }
 
@@ -235,4 +237,47 @@ glassPanel.addEventListener('mousemove', (e) => {
     
     glassPanel.style.setProperty('--mouse-x', `${x}px`);
     glassPanel.style.setProperty('--mouse-y', `${y}px`);
+});
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playSound(type) {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    if (type === 'click') {
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.1);
+    } else if (type === 'success') {
+        oscillator.type = 'triangle';
+        oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+        oscillator.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.2);
+    }
+}
+
+// Phase 3: Live Input Validation
+secretKey.addEventListener('input', () => {
+    const val = secretKey.value;
+    if (val.length === 0) {
+        secretKey.classList.remove('valid-key', 'invalid-key');
+    } else if (val.length >= 8 && /[0-9]/.test(val) && /[^a-zA-Z0-9]/.test(val)) {
+        secretKey.classList.add('valid-key');
+        secretKey.classList.remove('invalid-key');
+    } else {
+        secretKey.classList.add('invalid-key');
+        secretKey.classList.remove('valid-key');
+    }
 });
