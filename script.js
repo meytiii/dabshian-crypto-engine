@@ -44,8 +44,17 @@ function processCrypto(isEncrypting) {
     }
 }
 
-btnEncrypt.addEventListener('click', () => processCrypto(true));
-btnDecrypt.addEventListener('click', () => processCrypto(false));
+function handleProcessing(button, isEncrypting) {
+    button.classList.add('loading');
+    
+    setTimeout(() => {
+        processCrypto(isEncrypting);
+        button.classList.remove('loading');
+    }, 600);
+}
+
+btnEncrypt.addEventListener('click', function() { handleProcessing(this, true); });
+btnDecrypt.addEventListener('click', function() { handleProcessing(this, false); });
 
 const toastContainer = document.getElementById('toastContainer');
 
@@ -215,4 +224,15 @@ particlesJS("particles-js", {
         }
     },
     retina_detect: true
+});
+
+const glassPanel = document.getElementById('glassPanel');
+
+glassPanel.addEventListener('mousemove', (e) => {
+    const rect = glassPanel.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    glassPanel.style.setProperty('--mouse-x', `${x}px`);
+    glassPanel.style.setProperty('--mouse-y', `${y}px`);
 });
