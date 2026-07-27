@@ -232,9 +232,14 @@ select {
     padding-right: 2.5rem;
 }
 
-.toggle-btn {
+.input-actions-inline {
     position: absolute;
     right: 0.75rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.toggle-btn {
     background: transparent;
     border: none;
     color: var(--text-muted);

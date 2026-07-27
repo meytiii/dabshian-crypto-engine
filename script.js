@@ -10,6 +10,8 @@ const btnClear = document.getElementById('btnClear');
 const btnSwap = document.getElementById('btnSwap');
 const toggleKey = document.getElementById('toggleKey');
 const charCount = document.getElementById('charCount');
+const btnGenerateKey = document.getElementById('btnGenerateKey');
+const btnDownload = document.getElementById('btnDownload');
 const clockTime = document.getElementById('clockTime');
 const clockDate = document.getElementById('clockDate');
 const statEncrypted = document.getElementById('statEncrypted');
@@ -280,4 +282,45 @@ secretKey.addEventListener('input', () => {
         secretKey.classList.add('invalid-key');
         secretKey.classList.remove('valid-key');
     }
+});
+
+btnGenerateKey.addEventListener('click', () => {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=';
+    let newKey = '1!';
+    
+    for (let i = 0; i < 14; i++) {
+        newKey += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    
+    newKey = newKey.split('').sort(() => 0.5 - Math.random()).join('');
+    
+    secretKey.type = 'text';
+    toggleKey.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+    secretKey.value = newKey;
+    
+    secretKey.dispatchEvent(new Event('input'));
+    playSound('click');
+    showToast("Secure key generated");
+});
+
+btnDownload.addEventListener('click', () => {
+    const text = outputText.value;
+    if (!text || text.startsWith("Error:")) {
+        showToast("Nothing to download", true);
+        return;
+    }
+    
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    
+    a.href = url;
+    a.download = `crypto_payload_${new Date().getTime()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    playSound('click');
+    showToast("Payload downloaded as .txt");
 });

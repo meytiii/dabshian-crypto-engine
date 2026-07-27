@@ -48,7 +48,10 @@
                 <label><i class="fa-solid fa-key"></i> Secret Key</label>
                 <div class="input-wrapper">
                     <input type="password" id="secretKey" placeholder="Enter cipher key">
-                    <button id="toggleKey" class="toggle-btn" type="button" title="Toggle key visibility"><i class="fa-solid fa-eye"></i></button>
+                    <div class="input-actions-inline">
+                        <button id="btnGenerateKey" class="toggle-btn" type="button" title="Generate secure key"><i class="fa-solid fa-dice"></i></button>
+                        <button id="toggleKey" class="toggle-btn" type="button" title="Toggle key visibility"><i class="fa-solid fa-eye"></i></button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -64,6 +67,7 @@
                 <div class="btn-group-sm">
                     <button id="btnSwap" class="icon-btn" title="Move output to input"><i class="fa-solid fa-arrow-up"></i> Move to Input</button>
                     <button id="btnCopy" class="icon-btn" title="Copy to clipboard"><i class="fa-solid fa-copy"></i> Copy</button>
+                    <button id="btnDownload" class="icon-btn" title="Download as .txt"><i class="fa-solid fa-download"></i> Save</button>
                 </div>
             </div>
             <textarea id="outputText" readonly placeholder="Awaiting execution..."></textarea>
