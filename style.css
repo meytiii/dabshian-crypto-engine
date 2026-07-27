@@ -373,3 +373,12 @@ select {
 .toast.error {
     border-left-color: var(--secondary-glow);
 }
+
+.ui-logo {
+    width: 28px;
+    height: 28px;
+    vertical-align: middle;
+    margin-right: 8px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(156, 39, 176, 0.5); /* Purple glow matching your palette */
+}
