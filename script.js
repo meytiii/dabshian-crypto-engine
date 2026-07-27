@@ -324,3 +324,42 @@ btnDownload.addEventListener('click', () => {
     playSound('click');
     showToast("Payload downloaded as .txt");
 });
+
+inputText.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    inputText.classList.add('drag-over');
+});
+
+inputText.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    inputText.classList.remove('drag-over');
+});
+
+inputText.addEventListener('drop', (e) => {
+    e.preventDefault();
+    inputText.classList.remove('drag-over');
+    
+    if (e.dataTransfer.files.length > 0) {
+        const file = e.dataTransfer.files[0];
+        
+        if (file.type.match('text.*') || file.name.endsWith('.txt')) {
+            const reader = new FileReader();
+            
+            reader.onload = (event) => {
+                inputText.value = event.target.result;
+                inputText.dispatchEvent(new Event('input'));
+                playSound('success');
+                showToast("File payload loaded successfully");
+            };
+            
+            reader.onerror = () => {
+                showToast("Error reading file", true);
+            };
+            
+            reader.readAsText(file);
+        } else {
+            playSound('click');
+            showToast("Invalid file type. Please drop a .txt file", true);
+        }
+    }
+});

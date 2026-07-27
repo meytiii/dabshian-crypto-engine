@@ -470,3 +470,13 @@ textarea::-webkit-scrollbar-track {
     border-color: #ef4444;
     box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
 }
+
+#inputText {
+    transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#inputText.drag-over {
+    border-color: var(--primary-glow);
+    background-color: rgba(99, 102, 241, 0.15);
+    box-shadow: inset 0 0 15px rgba(99, 102, 241, 0.4);
+}
