@@ -1,71 +1,122 @@
+/**
+ * Dabshian Crypto Engine - Core Script
+ * Professional Client-Side Cryptographic Interface
+ */
+
+// DOM Elements
 const inputText = document.getElementById('inputText');
 const outputText = document.getElementById('outputText');
 const algorithm = document.getElementById('algorithm');
+const algoBadge = document.getElementById('algoBadge');
 const secretKey = document.getElementById('secretKey');
+const keyStrengthText = document.getElementById('keyStrengthText');
+const strengthMeterBar = document.getElementById('strengthMeterBar');
+const btnGenerateKey = document.getElementById('btnGenerateKey');
+const toggleKey = document.getElementById('toggleKey');
 const btnEncrypt = document.getElementById('btnEncrypt');
 const btnDecrypt = document.getElementById('btnDecrypt');
 const btnPaste = document.getElementById('btnPaste');
-const btnCopy = document.getElementById('btnCopy');
+const btnSample = document.getElementById('btnSample');
 const btnClear = document.getElementById('btnClear');
 const btnSwap = document.getElementById('btnSwap');
-const toggleKey = document.getElementById('toggleKey');
-const charCount = document.getElementById('charCount');
-const btnGenerateKey = document.getElementById('btnGenerateKey');
+const btnCopy = document.getElementById('btnCopy');
 const btnDownload = document.getElementById('btnDownload');
+const charCount = document.getElementById('charCount');
+const byteCount = document.getElementById('byteCount');
 const clockTime = document.getElementById('clockTime');
 const clockDate = document.getElementById('clockDate');
 const statEncrypted = document.getElementById('statEncrypted');
 const statDecrypted = document.getElementById('statDecrypted');
 const statTopAlgo = document.getElementById('statTopAlgo');
+const outputStatus = document.getElementById('outputStatus');
+const toastContainer = document.getElementById('toastContainer');
+const glassPanel = document.getElementById('glassPanel');
+const textareaWrapper = document.querySelector('.textarea-wrapper');
 const copyrightYear = document.getElementById('copyrightYear');
 
-function processCrypto(isEncrypting) {
-    const text = inputText.value.trim();
-    const key = secretKey.value;
-    const algo = algorithm.value;
+// Algorithm Badges Mapping
+const ALGO_CONFIG = {
+    AES: { badge: 'AES-256 CBC', desc: 'Military Grade Block Cipher' },
+    TripleDES: { badge: '3DES 168-bit', desc: 'Triple Data Encryption' },
+    Rabbit: { badge: 'Rabbit Stream', desc: '128-bit Fast Stream Cipher' },
+    RC4: { badge: 'RC4 Stream', desc: 'High-speed Stream Cipher' },
+    DES: { badge: 'DES 56-bit', desc: 'Legacy Standard Cipher' }
+};
 
-    if (!text || !key) {
-        outputText.value = "Error: Input Data and Secret Key are required.";
-        return;
+// Sample Payloads for Instant Testing
+const SAMPLES = [
+    "Secure communication protocol established. Payload verified and ready for end-to-end encryption across distributed nodes.",
+    "System security matrix: Zero-knowledge client-side encryption initialized. Timestamp: " + new Date().toISOString(),
+    "Confidential Transmission: Top-secret operational data with 256-bit entropy safeguard."
+];
+
+// Web Audio API Synthesis Engine
+let audioCtx = null;
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+}
 
+function playSound(type) {
     try {
-        let finalResult = "";
-        if (isEncrypting) {
-            finalResult = CryptoJS[algo].encrypt(text, key).toString();
-            updateStats(text.length, 0, algo);
-        } else {
-            const decrypted = CryptoJS[algo].decrypt(text, key);
-            finalResult = decrypted.toString(CryptoJS.enc.Utf8);
-            if (!finalResult) throw new Error("Invalid sequence");
-            updateStats(0, finalResult.length, algo);
+        initAudio();
+        const now = audioCtx.currentTime;
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        if (type === 'click') {
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(800, now);
+            oscillator.frequency.exponentialRampToValueAtTime(350, now + 0.06);
+            gainNode.gain.setValueAtTime(0.08, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+            oscillator.start(now);
+            oscillator.stop(now + 0.06);
+        } else if (type === 'success') {
+            oscillator.type = 'triangle';
+            oscillator.frequency.setValueAtTime(523.25, now); // C5
+            oscillator.frequency.setValueAtTime(659.25, now + 0.08); // E5
+            oscillator.frequency.setValueAtTime(783.99, now + 0.16); // G5
+            gainNode.gain.setValueAtTime(0.07, now);
+            gainNode.gain.linearRampToValueAtTime(0.001, now + 0.28);
+            oscillator.start(now);
+            oscillator.stop(now + 0.28);
+        } else if (type === 'error') {
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(220, now);
+            oscillator.frequency.exponentialRampToValueAtTime(110, now + 0.18);
+            gainNode.gain.setValueAtTime(0.1, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+            oscillator.start(now);
+            oscillator.stop(now + 0.18);
+        } else if (type === 'swish') {
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(300, now);
+            oscillator.frequency.exponentialRampToValueAtTime(1200, now + 0.12);
+            gainNode.gain.setValueAtTime(0.04, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+            oscillator.start(now);
+            oscillator.stop(now + 0.12);
         }
-        animateScramble(finalResult, outputText);
-    } catch (error) {
-        outputText.value = "Error: Decryption failed. Invalid cipher payload, incorrect key, or wrong algorithm.";
+    } catch (e) {
+        // Fallback silently if audio context is blocked
     }
 }
 
-function handleProcessing(button, isEncrypting) {
-    playSound('click');
-    button.classList.add('loading');
-    
-    setTimeout(() => {
-        processCrypto(isEncrypting);
-        button.classList.remove('loading');
-        playSound('success');
-    }, 600);
-}
-
-btnEncrypt.addEventListener('click', function() { handleProcessing(this, true); });
-btnDecrypt.addEventListener('click', function() { handleProcessing(this, false); });
-
-const toastContainer = document.getElementById('toastContainer');
-
+// Toast Notification Engine
 function showToast(message, isError = false) {
     const toast = document.createElement('div');
     toast.className = `toast ${isError ? 'error' : ''}`;
-    toast.innerHTML = `<i class="fa-solid ${isError ? 'fa-circle-exclamation' : 'fa-circle-check'}"></i> ${message}`;
+    toast.innerHTML = `
+        <i class="fa-solid ${isError ? 'fa-triangle-exclamation' : 'fa-circle-check'}" aria-hidden="true"></i>
+        <span>${message}</span>
+    `;
     
     toastContainer.appendChild(toast);
     
@@ -75,69 +126,321 @@ function showToast(message, isError = false) {
 
     setTimeout(() => {
         toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
+        setTimeout(() => toast.remove(), 350);
+    }, 3200);
 }
 
+// Update Text Counters (Characters & Byte Size)
+function updateCounters() {
+    const text = inputText.value;
+    const len = text.length;
+    const bytes = new Blob([text]).size;
+    
+    charCount.textContent = `${len.toLocaleString()} char${len === 1 ? '' : 's'}`;
+    byteCount.textContent = `(${formatBytes(bytes)})`;
+}
+
+function formatBytes(bytes) {
+    if (bytes === 0) return '0 bytes';
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
+
+// Algorithm Selector Change Listener
+algorithm.addEventListener('change', () => {
+    const algo = algorithm.value;
+    if (ALGO_CONFIG[algo] && algoBadge) {
+        algoBadge.textContent = ALGO_CONFIG[algo].badge;
+    }
+    playSound('click');
+});
+
+// Calculate Password Entropy & Strength
+function assessKeyStrength(key) {
+    if (!key || key.length === 0) {
+        keyStrengthText.textContent = 'Awaiting key';
+        keyStrengthText.style.color = 'var(--text-dim)';
+        strengthMeterBar.className = 'strength-meter-bar';
+        return;
+    }
+
+    let score = 0;
+    if (key.length >= 8) score++;
+    if (key.length >= 14) score++;
+    if (/[A-Z]/.test(key) && /[a-z]/.test(key)) score++;
+    if (/[0-9]/.test(key)) score++;
+    if (/[^A-Za-z0-9]/.test(key)) score++;
+
+    strengthMeterBar.className = 'strength-meter-bar';
+
+    if (score <= 1) {
+        keyStrengthText.textContent = 'Weak Key (Vulnerable)';
+        keyStrengthText.style.color = 'var(--primary-rose)';
+        strengthMeterBar.classList.add('weak');
+    } else if (score === 2 || score === 3) {
+        keyStrengthText.textContent = 'Fair Key';
+        keyStrengthText.style.color = 'var(--accent-amber)';
+        strengthMeterBar.classList.add('fair');
+    } else if (score === 4) {
+        keyStrengthText.textContent = 'Good Strength';
+        keyStrengthText.style.color = '#38bdf8';
+        strengthMeterBar.classList.add('good');
+    } else {
+        keyStrengthText.textContent = 'Cryptographic Grade';
+        keyStrengthText.style.color = 'var(--accent-emerald)';
+        strengthMeterBar.classList.add('strong');
+    }
+}
+
+secretKey.addEventListener('input', () => {
+    assessKeyStrength(secretKey.value);
+});
+
+// CSPRNG Secure Key Generator (True Randomness)
+btnGenerateKey.addEventListener('click', () => {
+    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~|}{[]:;?><,./-=';
+    const keyLength = 18;
+    const randomBuffer = new Uint8Array(keyLength);
+    window.crypto.getRandomValues(randomBuffer);
+    
+    let generatedKey = '';
+    for (let i = 0; i < keyLength; i++) {
+        generatedKey += charset[randomBuffer[i] % charset.length];
+    }
+    
+    secretKey.type = 'text';
+    toggleKey.innerHTML = '<i class="fa-solid fa-eye-slash" aria-hidden="true"></i>';
+    secretKey.value = generatedKey;
+    assessKeyStrength(generatedKey);
+    
+    playSound('swish');
+    showToast("Cryptographic 18-char key generated");
+});
+
+// Toggle Key Visibility
+toggleKey.addEventListener('click', () => {
+    const isPassword = secretKey.type === 'password';
+    secretKey.type = isPassword ? 'text' : 'password';
+    toggleKey.innerHTML = isPassword 
+        ? '<i class="fa-solid fa-eye-slash" aria-hidden="true"></i>' 
+        : '<i class="fa-solid fa-eye" aria-hidden="true"></i>';
+    playSound('click');
+});
+
+// Primary Cryptographic Execution
+function processCrypto(isEncrypting) {
+    const text = inputText.value.trim();
+    const key = secretKey.value;
+    const algo = algorithm.value;
+
+    if (!text) {
+        outputText.value = "Error: Input Data payload cannot be empty.";
+        outputStatus.textContent = "Error";
+        outputStatus.className = "output-status-chip";
+        playSound('error');
+        showToast("Please enter or paste input data.", true);
+        return;
+    }
+
+    if (!key) {
+        outputText.value = "Error: Secret Key is required for cryptographic operations.";
+        outputStatus.textContent = "Error";
+        outputStatus.className = "output-status-chip";
+        playSound('error');
+        showToast("Secret key is missing.", true);
+        secretKey.focus();
+        return;
+    }
+
+    try {
+        let finalResult = "";
+        if (isEncrypting) {
+            finalResult = CryptoJS[algo].encrypt(text, key).toString();
+            updateStats(text.length, 0, algo);
+            outputStatus.textContent = "Encrypted (" + algo + ")";
+            outputStatus.className = "output-status-chip ready";
+        } else {
+            const decrypted = CryptoJS[algo].decrypt(text, key);
+            finalResult = decrypted.toString(CryptoJS.enc.Utf8);
+            if (!finalResult) {
+                throw new Error("Invalid decryption key or corrupt payload");
+            }
+            updateStats(0, finalResult.length, algo);
+            outputStatus.textContent = "Decrypted Plaintext";
+            outputStatus.className = "output-status-chip ready";
+        }
+        
+        animateScramble(finalResult, outputText);
+        playSound('success');
+        showToast(isEncrypting ? "Payload encrypted successfully" : "Payload decrypted successfully");
+    } catch (error) {
+        outputText.value = "Error: Decryption failed. Invalid cipher payload, incorrect key, or mismatched algorithm.";
+        outputStatus.textContent = "Decryption Failed";
+        outputStatus.className = "output-status-chip";
+        playSound('error');
+        showToast("Decryption failed: check key and cipher payload", true);
+    }
+}
+
+function handleProcessing(button, isEncrypting) {
+    playSound('click');
+    button.classList.add('loading');
+    outputStatus.textContent = "Processing...";
+    outputStatus.className = "output-status-chip active";
+    
+    setTimeout(() => {
+        processCrypto(isEncrypting);
+        button.classList.remove('loading');
+    }, 450);
+}
+
+btnEncrypt.addEventListener('click', function() { handleProcessing(this, true); });
+btnDecrypt.addEventListener('click', function() { handleProcessing(this, false); });
+
+// Text Matrix Scramble Animation
+function animateScramble(finalText, element) {
+    const chars = 'ABCDEF0123456789$#@%!&*/<>{}[]';
+    const iterations = Math.min(18, Math.max(8, Math.floor(finalText.length / 5)));
+    let currentIteration = 0;
+    
+    const interval = setInterval(() => {
+        let scrambled = "";
+        for (let i = 0; i < finalText.length; i++) {
+            if (i < (currentIteration / iterations) * finalText.length) {
+                scrambled += finalText[i];
+            } else if (finalText[i] === '\n' || finalText[i] === ' ') {
+                scrambled += finalText[i];
+            } else {
+                scrambled += chars[Math.floor(Math.random() * chars.length)];
+            }
+        }
+        element.value = scrambled;
+        
+        currentIteration++;
+        if (currentIteration > iterations) {
+            clearInterval(interval);
+            element.value = finalText;
+        }
+    }, 25);
+}
+
+// Sample Payload Loader
+if (btnSample) {
+    btnSample.addEventListener('click', () => {
+        const randomSample = SAMPLES[Math.floor(Math.random() * SAMPLES.length)];
+        inputText.value = randomSample;
+        updateCounters();
+        playSound('click');
+        showToast("Sample text payload loaded");
+    });
+}
+
+// Paste Handler
 btnPaste.addEventListener('click', async () => {
     try {
         const text = await navigator.clipboard.readText();
         if (!text) throw new Error("Clipboard is empty");
         inputText.value = text;
+        updateCounters();
         
         const originalHtml = btnPaste.innerHTML;
-        btnPaste.innerHTML = '<i class="fa-solid fa-check"></i> Pasted';
-        showToast("Payload pasted from clipboard");
+        btnPaste.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i> Pasted';
+        playSound('click');
+        showToast("Pasted from clipboard");
         setTimeout(() => btnPaste.innerHTML = originalHtml, 1500);
     } catch (err) {
-        showToast("Clipboard permission denied or empty.", true);
+        showToast("Clipboard access denied or empty.", true);
     }
 });
 
+// Copy Output Handler
 btnCopy.addEventListener('click', async () => {
-    if (!outputText.value || outputText.value.startsWith("Error:")) return;
+    if (!outputText.value || outputText.value.startsWith("Error:")) {
+        showToast("No valid output to copy.", true);
+        return;
+    }
     
     try {
         await navigator.clipboard.writeText(outputText.value);
-        
         const originalHtml = btnCopy.innerHTML;
-        btnCopy.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
-        showToast("Payload copied to clipboard");
+        btnCopy.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i> Copied';
+        playSound('click');
+        showToast("Output copied to clipboard");
         setTimeout(() => btnCopy.innerHTML = originalHtml, 1500);
     } catch (err) {
         showToast("Failed to copy to clipboard.", true);
     }
 });
 
-inputText.addEventListener('input', () => {
-    const len = inputText.value.length;
-    charCount.textContent = `${len} char${len === 1 ? '' : 's'}`;
-});
-
-toggleKey.addEventListener('click', () => {
-    const isPassword = secretKey.type === 'password';
-    secretKey.type = isPassword ? 'text' : 'password';
-    toggleKey.innerHTML = isPassword ? '<i class="fa-solid fa-eye-slash"></i>' : '<i class="fa-solid fa-eye"></i>';
-});
-
+// Clear All Handler
 btnClear.addEventListener('click', () => {
     inputText.value = '';
     outputText.value = '';
-    charCount.textContent = '0 chars';
+    outputStatus.textContent = 'Idle';
+    outputStatus.className = 'output-status-chip';
+    updateCounters();
+    playSound('click');
+    showToast("Cleared input and output");
 });
 
+// Move Output to Input (Swap)
 btnSwap.addEventListener('click', () => {
-    if (!outputText.value || outputText.value.startsWith("Error:")) return;
+    if (!outputText.value || outputText.value.startsWith("Error:")) {
+        showToast("No valid output to transfer.", true);
+        return;
+    }
     inputText.value = outputText.value;
     outputText.value = '';
-    charCount.textContent = `${inputText.value.length} chars`;
+    outputStatus.textContent = 'Idle';
+    outputStatus.className = 'output-status-chip';
+    updateCounters();
+    playSound('swish');
+    showToast("Payload moved to input");
 });
 
+// Download Output as .txt File
+btnDownload.addEventListener('click', () => {
+    const text = outputText.value;
+    if (!text || text.startsWith("Error:")) {
+        showToast("Nothing to export", true);
+        return;
+    }
+    
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    a.href = url;
+    a.download = `crypto_payload_${timestamp}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    playSound('click');
+    showToast("Payload downloaded as .txt");
+});
+
+// Live Input Event Listeners
+inputText.addEventListener('input', updateCounters);
+
+// Keyboard Shortcuts: Ctrl+Enter (Encrypt), Ctrl+Shift+Enter (Decrypt)
+document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        if (e.shiftKey) {
+            btnDecrypt.click();
+        } else {
+            btnEncrypt.click();
+        }
+    }
+});
+
+// Live Iran Standard Time Clock & Date
 function updateClock() {
     const now = new Date();
-    
-    now.setTime(now.getTime() + (60 * 60 * 1000));
-    
     const timeOptions = { timeZone: 'Asia/Tehran', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
     const dateOptions = { timeZone: 'Asia/Tehran', month: 'short', day: 'numeric', year: 'numeric' };
     
@@ -147,8 +450,11 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-copyrightYear.textContent = new Date().getFullYear();
+if (copyrightYear) {
+    copyrightYear.textContent = new Date().getFullYear();
+}
 
+// Telemetry & Usage Analytics
 let stats = JSON.parse(localStorage.getItem('dabshian_crypto_stats')) || {
     encrypted: 0,
     decrypted: 0,
@@ -159,7 +465,7 @@ function renderStats() {
     statEncrypted.textContent = stats.encrypted.toLocaleString();
     statDecrypted.textContent = stats.decrypted.toLocaleString();
     
-    let topAlgo = 'N/A';
+    let topAlgo = 'AES';
     let max = 0;
     for (const [algo, count] of Object.entries(stats.algos)) {
         if (count > max) {
@@ -181,185 +487,84 @@ function updateStats(encCount, decCount, algo) {
 
 renderStats();
 
-function animateScramble(finalText, element) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
-    const iterations = 15;
-    let currentIteration = 0;
-    
-    const interval = setInterval(() => {
-        let scrambled = "";
-        for (let i = 0; i < finalText.length; i++) {
-            if (i < (currentIteration / iterations) * finalText.length) {
-                scrambled += finalText[i];
+// Interactive Glass Spotlight
+if (glassPanel) {
+    glassPanel.addEventListener('mousemove', (e) => {
+        const rect = glassPanel.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        glassPanel.style.setProperty('--mouse-x', `${x}px`);
+        glassPanel.style.setProperty('--mouse-y', `${y}px`);
+    });
+}
+
+// Drag and Drop Text File Loading
+if (textareaWrapper) {
+    ['dragenter', 'dragover'].forEach(eventName => {
+        textareaWrapper.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            textareaWrapper.classList.add('drag-active');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        textareaWrapper.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            textareaWrapper.classList.remove('drag-active');
+        });
+    });
+
+    textareaWrapper.addEventListener('drop', (e) => {
+        if (e.dataTransfer.files.length > 0) {
+            const file = e.dataTransfer.files[0];
+            
+            if (file.type.match('text.*') || file.name.endsWith('.txt') || file.name.endsWith('.json') || file.name.endsWith('.md')) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    inputText.value = event.target.result;
+                    updateCounters();
+                    playSound('success');
+                    showToast(`Loaded ${file.name} (${formatBytes(file.size)})`);
+                };
+                reader.onerror = () => {
+                    showToast("Error reading file", true);
+                };
+                reader.readAsText(file);
             } else {
-                scrambled += chars[Math.floor(Math.random() * chars.length)];
+                playSound('error');
+                showToast("Please drop a valid text file (.txt, .json, .md)", true);
             }
         }
-        element.value = scrambled;
-        
-        currentIteration++;
-        if (currentIteration > iterations) {
-            clearInterval(interval);
-            element.value = finalText;
-        }
-    }, 30);
+    });
 }
 
-particlesJS("particles-js", {
-    particles: {
-        number: { value: 60, density: { enable: true, value_area: 800 } },
-        color: { value: "#6366f1" },
-        shape: { type: "circle" },
-        opacity: { value: 0.5, random: false },
-        size: { value: 3, random: true },
-        line_linked: { enable: true, distance: 150, color: "#ec4899", opacity: 0.4, width: 1 },
-        move: { enable: true, speed: 2, direction: "none", random: false, straight: false, out_mode: "out", bounce: false }
-    },
-    interactivity: {
-        detect_on: "canvas",
-        events: {
-            onhover: { enable: true, mode: "grab" },
-            onclick: { enable: true, mode: "push" },
-            resize: true
+// Background Particle Network
+if (typeof particlesJS !== 'undefined') {
+    particlesJS("particles-js", {
+        particles: {
+            number: { value: 50, density: { enable: true, value_area: 850 } },
+            color: { value: ["#6366f1", "#06b6d4", "#ec4899"] },
+            shape: { type: "circle" },
+            opacity: { value: 0.45, random: true },
+            size: { value: 2.5, random: true },
+            line_linked: { enable: true, distance: 140, color: "#818cf8", opacity: 0.28, width: 1 },
+            move: { enable: true, speed: 1.6, direction: "none", random: false, straight: false, out_mode: "out", bounce: false }
         },
-        modes: {
-            grab: { distance: 140, line_linked: { opacity: 1 } },
-            push: { particles_nb: 4 }
-        }
-    },
-    retina_detect: true
-});
-
-const glassPanel = document.getElementById('glassPanel');
-
-glassPanel.addEventListener('mousemove', (e) => {
-    const rect = glassPanel.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    glassPanel.style.setProperty('--mouse-x', `${x}px`);
-    glassPanel.style.setProperty('--mouse-y', `${y}px`);
-});
-
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-function playSound(type) {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    
-    if (type === 'click') {
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
-        oscillator.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-        oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 0.1);
-    } else if (type === 'success') {
-        oscillator.type = 'triangle';
-        oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
-        oscillator.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1);
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
-        oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 0.2);
-    }
-}
-
-// Phase 3: Live Input Validation
-secretKey.addEventListener('input', () => {
-    const val = secretKey.value;
-    if (val.length === 0) {
-        secretKey.classList.remove('valid-key', 'invalid-key');
-    } else if (val.length >= 8 && /[0-9]/.test(val) && /[^a-zA-Z0-9]/.test(val)) {
-        secretKey.classList.add('valid-key');
-        secretKey.classList.remove('invalid-key');
-    } else {
-        secretKey.classList.add('invalid-key');
-        secretKey.classList.remove('valid-key');
-    }
-});
-
-btnGenerateKey.addEventListener('click', () => {
-    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=';
-    let newKey = '1!';
-    
-    for (let i = 0; i < 14; i++) {
-        newKey += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    
-    newKey = newKey.split('').sort(() => 0.5 - Math.random()).join('');
-    
-    secretKey.type = 'text';
-    toggleKey.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
-    secretKey.value = newKey;
-    
-    secretKey.dispatchEvent(new Event('input'));
-    playSound('click');
-    showToast("Secure key generated");
-});
-
-btnDownload.addEventListener('click', () => {
-    const text = outputText.value;
-    if (!text || text.startsWith("Error:")) {
-        showToast("Nothing to download", true);
-        return;
-    }
-    
-    const blob = new Blob([text], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    
-    a.href = url;
-    a.download = `crypto_payload_${new Date().getTime()}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
-    playSound('click');
-    showToast("Payload downloaded as .txt");
-});
-
-inputText.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    inputText.classList.add('drag-over');
-});
-
-inputText.addEventListener('dragleave', (e) => {
-    e.preventDefault();
-    inputText.classList.remove('drag-over');
-});
-
-inputText.addEventListener('drop', (e) => {
-    e.preventDefault();
-    inputText.classList.remove('drag-over');
-    
-    if (e.dataTransfer.files.length > 0) {
-        const file = e.dataTransfer.files[0];
-        
-        if (file.type.match('text.*') || file.name.endsWith('.txt')) {
-            const reader = new FileReader();
-            
-            reader.onload = (event) => {
-                inputText.value = event.target.result;
-                inputText.dispatchEvent(new Event('input'));
-                playSound('success');
-                showToast("File payload loaded successfully");
-            };
-            
-            reader.onerror = () => {
-                showToast("Error reading file", true);
-            };
-            
-            reader.readAsText(file);
-        } else {
-            playSound('click');
-            showToast("Invalid file type. Please drop a .txt file", true);
-        }
-    }
-});
+        interactivity: {
+            detect_on: "canvas",
+            events: {
+                onhover: { enable: true, mode: "grab" },
+                onclick: { enable: true, mode: "push" },
+                resize: true
+            },
+            modes: {
+                grab: { distance: 130, line_linked: { opacity: 0.8 } },
+                push: { particles_nb: 3 }
+            }
+        },
+        retina_detect: true
+    });
+}

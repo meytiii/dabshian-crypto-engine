@@ -3,97 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dabshian Crypto Engine</title>
+    <title>Dabshian Crypto Engine | Military-Grade Encryption Suite</title>
+    <meta name="description" content="Professional client-side cryptographic engine supporting AES-256, Triple DES, Rabbit, and RC4 with real-time entropy validation.">
     <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
 </head>
 <body>
     <div id="particles-js" class="background-animation"></div>
-    <div class="container glass-panel" id="glassPanel">
+    <div class="ambient-glow ambient-glow-1"></div>
+    <div class="ambient-glow ambient-glow-2"></div>
+
+    <main class="container glass-panel" id="glassPanel">
         <div class="glow-effect"></div>
-        <div class="header-top">
-            <div class="live-clock"><i class="fa-regular fa-clock"></i> <span id="clockTime">--:--:--</span></div>
-            <div class="live-date"><i class="fa-regular fa-calendar-days"></i> <span id="clockDate">--- --, ----</span></div>
-        </div>
-        <h2 class="title"><img src="favicon.png" alt="Logo" class="ui-logo"> Dabshian Crypto Engine</h2>
         
-        <div class="input-group">
-            <div class="label-row">
-                <label>Input Data <span id="charCount" class="char-count">0 chars</span></label>
-                <div class="btn-group-sm">
-                    <button id="btnPaste" class="icon-btn" title="Paste from clipboard"><i class="fa-solid fa-paste"></i> Paste</button>
-                    <button id="btnClear" class="icon-btn" title="Clear fields"><i class="fa-solid fa-trash"></i> Clear</button>
+        <!-- Header Bar -->
+        <header class="header-top">
+            <div class="system-status">
+                <span class="status-indicator"><span class="status-dot"></span></span>
+                <span class="status-text">SECURE ENGINE <span class="badge-accent">v2.5 PRO</span></span>
+            </div>
+            <div class="header-clock-group">
+                <div class="live-clock-pill">
+                    <i class="fa-regular fa-clock" aria-hidden="true"></i>
+                    <span id="clockTime" aria-live="polite">--:--:--</span>
+                </div>
+                <div class="live-date-pill">
+                    <i class="fa-regular fa-calendar-days" aria-hidden="true"></i>
+                    <span id="clockDate">--- --, ----</span>
                 </div>
             </div>
-            <textarea id="inputText" placeholder="Initialize text payload..."></textarea>
-        </div>
+        </header>
 
-        <div class="controls">
+        <!-- Brand Header -->
+        <div class="brand-header">
+            <div class="logo-wrapper">
+                <img src="favicon.png" alt="Dabshian Logo" class="ui-logo">
+                <div class="logo-ring"></div>
+            </div>
+            <div class="brand-title-wrap">
+                <h1 class="title">Dabshian Crypto Engine</h1>
+                <p class="subtitle">Zero-Knowledge Client-Side Cryptographic Processing</p>
+            </div>
+        </div>
+        
+        <!-- Input Section -->
+        <section class="panel-section" aria-label="Input Payload Section">
+            <div class="label-row">
+                <label for="inputText" class="section-label">
+                    <i class="fa-solid fa-file-code label-icon" aria-hidden="true"></i> Input Data
+                    <span id="charCount" class="char-count">0 chars</span>
+                    <span id="byteCount" class="byte-count">(0 bytes)</span>
+                </label>
+                <div class="btn-group-sm">
+                    <button id="btnSample" class="icon-btn" type="button" title="Load sample text"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Sample</button>
+                    <button id="btnPaste" class="icon-btn" type="button" title="Paste from clipboard"><i class="fa-solid fa-paste" aria-hidden="true"></i> Paste</button>
+                    <button id="btnClear" class="icon-btn danger-hover" type="button" title="Clear all fields"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> Clear</button>
+                </div>
+            </div>
+            <div class="textarea-wrapper">
+                <textarea id="inputText" placeholder="Enter or paste text payload here, or drag & drop a .txt file..." spellcheck="false"></textarea>
+                <div class="drop-overlay" id="dropOverlay">
+                    <i class="fa-solid fa-cloud-arrow-up drop-icon" aria-hidden="true"></i>
+                    <span>Drop text file to import payload</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Configuration Controls -->
+        <section class="controls-grid" aria-label="Cipher Configuration">
+            <!-- Algorithm Selector -->
             <div class="input-group">
-                <label><i class="fa-solid fa-microchip"></i> Algorithm</label>
+                <div class="label-row-compact">
+                    <label for="algorithm" class="section-label">
+                        <i class="fa-solid fa-microchip label-icon" aria-hidden="true"></i> Algorithm
+                    </label>
+                    <span class="algo-badge" id="algoBadge">AES-256 CBC</span>
+                </div>
                 <div class="select-wrapper">
-                    <select id="algorithm">
-                        <option value="AES">AES-256</option>
-                        <option value="DES">DES</option>
-                        <option value="TripleDES">Triple DES</option>
-                        <option value="Rabbit">Rabbit</option>
-                        <option value="RC4">RC4</option>
+                    <select id="algorithm" aria-label="Select encryption algorithm">
+                        <option value="AES" selected>AES-256 (Advanced Encryption Standard)</option>
+                        <option value="TripleDES">Triple DES (168-bit TDEA)</option>
+                        <option value="Rabbit">Rabbit (128-bit Stream Cipher)</option>
+                        <option value="RC4">RC4 (Stream Cipher - Fast)</option>
+                        <option value="DES">DES (56-bit Legacy Standard)</option>
                     </select>
                 </div>
             </div>
+
+            <!-- Secret Key Input -->
             <div class="input-group">
-                <label><i class="fa-solid fa-key"></i> Secret Key</label>
+                <div class="label-row-compact">
+                    <label for="secretKey" class="section-label">
+                        <i class="fa-solid fa-key label-icon" aria-hidden="true"></i> Secret Key
+                    </label>
+                    <span class="key-strength-label" id="keyStrengthText">Awaiting key</span>
+                </div>
                 <div class="input-wrapper">
-                    <input type="password" id="secretKey" placeholder="Enter cipher key">
+                    <input type="password" id="secretKey" placeholder="Enter passphrase or generate one..." autocomplete="off" spellcheck="false">
                     <div class="input-actions-inline">
-                        <button id="btnGenerateKey" class="toggle-btn" type="button" title="Generate secure key"><i class="fa-solid fa-dice"></i></button>
-                        <button id="toggleKey" class="toggle-btn" type="button" title="Toggle key visibility"><i class="fa-solid fa-eye"></i></button>
+                        <button id="btnGenerateKey" class="toggle-btn" type="button" title="Generate 16-character cryptographic key"><i class="fa-solid fa-dice-d20" aria-hidden="true"></i></button>
+                        <button id="toggleKey" class="toggle-btn" type="button" title="Toggle key visibility"><i class="fa-solid fa-eye" aria-hidden="true"></i></button>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="actions">
-            <button id="btnEncrypt" class="action-btn encrypt-btn"><i class="fa-solid fa-lock"></i> Encrypt</button>
-            <button id="btnDecrypt" class="action-btn decrypt-btn"><i class="fa-solid fa-lock-open"></i> Decrypt</button>
-        </div>
-
-        <div class="input-group">
-            <div class="label-row">
-                <label>Output Data</label>
-                <div class="btn-group-sm">
-                    <button id="btnSwap" class="icon-btn" title="Move output to input"><i class="fa-solid fa-arrow-up"></i> Move to Input</button>
-                    <button id="btnCopy" class="icon-btn" title="Copy to clipboard"><i class="fa-solid fa-copy"></i> Copy</button>
-                    <button id="btnDownload" class="icon-btn" title="Download as .txt"><i class="fa-solid fa-download"></i> Save</button>
+                <div class="strength-meter-bar" id="strengthMeterBar">
+                    <div class="strength-segment"></div>
+                    <div class="strength-segment"></div>
+                    <div class="strength-segment"></div>
+                    <div class="strength-segment"></div>
                 </div>
             </div>
-            <textarea id="outputText" readonly placeholder="Awaiting execution..."></textarea>
-        </div>
+        </section>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <span class="stat-value" id="statEncrypted">0</span>
-                <span class="stat-label"><i class="fa-solid fa-lock"></i> Encrypted</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-value" id="statDecrypted">0</span>
-                <span class="stat-label"><i class="fa-solid fa-lock-open"></i> Decrypted</span>
-            </div>
-            <div class="stat-card">
-                <span class="stat-value" id="statTopAlgo">N/A</span>
-                <span class="stat-label"><i class="fa-solid fa-chart-pie"></i> Top Algo</span>
-            </div>
-        </div>
+        <!-- Primary Action Trigger Center -->
+        <section class="actions" aria-label="Execution Actions">
+            <button id="btnEncrypt" class="action-btn encrypt-btn" type="button">
+                <i class="fa-solid fa-shield-halved btn-icon" aria-hidden="true"></i>
+                <span class="btn-text">Encrypt Payload</span>
+                <span class="btn-shortcut">Ctrl+Enter</span>
+            </button>
+            <button id="btnDecrypt" class="action-btn decrypt-btn" type="button">
+                <i class="fa-solid fa-lock-open btn-icon" aria-hidden="true"></i>
+                <span class="btn-text">Decrypt Payload</span>
+                <span class="btn-shortcut">Ctrl+Shift+Enter</span>
+            </button>
+        </section>
 
+        <!-- Output Section -->
+        <section class="panel-section" aria-label="Output Payload Section">
+            <div class="label-row">
+                <div class="output-label-wrap">
+                    <label for="outputText" class="section-label">
+                        <i class="fa-solid fa-terminal label-icon" aria-hidden="true"></i> Output Data
+                    </label>
+                    <span class="output-status-chip" id="outputStatus">Idle</span>
+                </div>
+                <div class="btn-group-sm">
+                    <button id="btnSwap" class="icon-btn" type="button" title="Transfer output payload back into input"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Move to Input</button>
+                    <button id="btnCopy" class="icon-btn primary-hover" type="button" title="Copy output ciphertext/plaintext"><i class="fa-solid fa-copy" aria-hidden="true"></i> Copy</button>
+                    <button id="btnDownload" class="icon-btn" type="button" title="Export as timestamped .txt file"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Save</button>
+                </div>
+            </div>
+            <div class="textarea-wrapper output-wrapper">
+                <textarea id="outputText" readonly placeholder="Encrypted ciphertext or decrypted plaintext will materialize here..." spellcheck="false"></textarea>
+            </div>
+        </section>
+
+        <!-- Analytics & Telemetry Bento Grid -->
+        <section class="stats-grid" aria-label="Session Analytics">
+            <div class="stat-card">
+                <div class="stat-icon-wrap enc-icon"><i class="fa-solid fa-lock" aria-hidden="true"></i></div>
+                <div class="stat-content">
+                    <span class="stat-value" id="statEncrypted">0</span>
+                    <span class="stat-label">Characters Encrypted</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrap dec-icon"><i class="fa-solid fa-unlock-keyhole" aria-hidden="true"></i></div>
+                <div class="stat-content">
+                    <span class="stat-value" id="statDecrypted">0</span>
+                    <span class="stat-label">Characters Decrypted</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrap algo-icon"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i></div>
+                <div class="stat-content">
+                    <span class="stat-value" id="statTopAlgo">AES</span>
+                    <span class="stat-label">Primary Algorithm</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
         <footer class="footer">
-            <p>&copy; <span id="copyrightYear"></span> Dabshian Group. All rights reserved.</p>
+            <div class="footer-links">
+                <span class="security-chip"><i class="fa-solid fa-shield-check" aria-hidden="true"></i> End-to-End Client-Side</span>
+                <span class="security-chip"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Zero Server Telemetry</span>
+            </div>
+            <p class="copyright">&copy; <span id="copyrightYear">2026</span> Dabshian Group. All cryptographic algorithms run strictly local in-browser.</p>
         </footer>
-    </div>
+    </main>
     
-    <div id="toastContainer" class="toast-container"></div>
+    <!-- Floating Toast Container -->
+    <div id="toastContainer" class="toast-container" aria-live="assertive"></div>
+
     <script src="script.js"></script>
 </body>
 </html>

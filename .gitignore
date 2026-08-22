@@ -1,0 +1,10 @@
+# Graphify outputs
+graphify-out/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Node / Environment dependencies (if added in the future)
+node_modules/
+.env
