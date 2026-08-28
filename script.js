@@ -545,6 +545,7 @@ if (textareaWrapper) {
                 reader.onload = (event) => {
                     inputText.value = event.target.result;
                     updateCounters();
+                    autoResize(inputText);
                     playSound('success');
                     showToast(`Loaded ${file.name} (${formatBytes(file.size)})`);
                 };
@@ -586,4 +587,14 @@ if (typeof particlesJS !== 'undefined') {
         },
         retina_detect: true
     });
-}
+}
+
+// Window resize listener to recalculate auto-expansion on viewport changes
+window.addEventListener('resize', () => {
+    autoResize(inputText);
+    autoResize(outputText);
+});
+
+// Initialize dynamic sizing on load
+autoResize(inputText);
+autoResize(outputText);
