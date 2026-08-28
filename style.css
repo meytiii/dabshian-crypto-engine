@@ -186,6 +186,60 @@ body {
     margin-left: 0.35rem;
 }
 
+.header-right-group {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+}
+
+.repo-star-btn {
+    background: var(--card-cream);
+    border: var(--border-medium);
+    box-shadow: var(--shadow-hard-pill);
+    color: var(--text-ink);
+    padding: 0.45rem 0.95rem;
+    border-radius: var(--radius-full);
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: transform var(--transition-tactile), box-shadow var(--transition-tactile), background var(--transition-tactile);
+}
+
+.repo-star-btn:hover {
+    background: var(--accent-mustard-light);
+    color: var(--text-ink);
+    transform: translate(-2px, -2px);
+    box-shadow: 4.5px 4.5px 0px #141416;
+}
+
+.repo-star-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #141416;
+}
+
+.repo-icon {
+    font-size: 1.05rem;
+    color: var(--text-ink);
+}
+
+.star-badge {
+    background: #141416;
+    color: #fbbf24;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.68rem;
+    margin-left: 0.2rem;
+}
+
 .header-clock-group {
     display: flex;
     align-items: center;
@@ -872,11 +926,51 @@ select:focus, input:focus {
     align-items: center;
     gap: 0.45rem;
     font-weight: 800;
+    text-decoration: none;
 }
 
 .security-chip i {
     color: #16a34a;
     font-size: 0.9rem;
+}
+
+.github-chip {
+    background: var(--accent-mustard-pale);
+    transition: transform var(--transition-tactile), box-shadow var(--transition-tactile), background var(--transition-tactile);
+}
+
+.github-chip:hover {
+    background: var(--accent-mustard-light);
+    transform: translate(-1.5px, -1.5px);
+    box-shadow: 3.5px 3.5px 0px #141416;
+}
+
+.github-chip:active {
+    transform: translate(1.5px, 1.5px);
+    box-shadow: 1px 1px 0px #141416;
+}
+
+.github-chip i.fa-github {
+    font-size: 1rem;
+    color: var(--text-ink);
+}
+
+.star-count-pill {
+    background: #141416;
+    color: #fbbf24;
+    font-size: 0.68rem;
+    font-weight: 900;
+    padding: 0.12rem 0.45rem;
+    border-radius: var(--radius-xs);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-left: 0.2rem;
+}
+
+.star-count-pill i {
+    color: #fbbf24 !important;
+    font-size: 0.65rem !important;
 }
 
 .copyright {
@@ -988,6 +1082,18 @@ select:focus, input:focus {
         gap: 0.85rem;
         padding-bottom: 1.25rem;
         margin-bottom: 1.5rem;
+    }
+
+    .header-right-group {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+    }
+
+    .repo-star-btn {
+        width: 100%;
+        justify-content: center;
     }
 
     .header-clock-group {
