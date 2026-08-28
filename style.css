@@ -439,7 +439,7 @@ body {
     background: rgba(244, 63, 94, 0.2);
 }
 
-/* Textareas & Drop Zone - Scaled Up */
+/* Textareas & Drop Zone - Dynamic Auto-Expanding */
 .textarea-wrapper {
     position: relative;
     border-radius: var(--radius-md);
@@ -449,7 +449,7 @@ body {
 
 textarea {
     width: 100%;
-    min-height: 170px;
+    min-height: 160px;
     background: var(--glass-well);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-md);
@@ -458,9 +458,13 @@ textarea {
     font-family: 'JetBrains Mono', monospace;
     font-size: 1rem;
     line-height: 1.65;
-    resize: vertical;
+    resize: none;
+    overflow-y: hidden;
+    field-sizing: content;
     outline: none;
-    transition: all var(--transition-normal);
+    box-sizing: border-box;
+    display: block;
+    transition: border-color var(--transition-normal), background var(--transition-normal), box-shadow var(--transition-normal);
 }
 
 textarea::placeholder {

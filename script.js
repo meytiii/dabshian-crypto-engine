@@ -130,6 +130,13 @@ function showToast(message, isError = false) {
     }, 3200);
 }
 
+// Dynamic Auto-Expanding Textarea Engine
+function autoResize(el) {
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+}
+
 // Update Text Counters (Characters & Byte Size)
 function updateCounters() {
     const text = inputText.value;
@@ -138,6 +145,7 @@ function updateCounters() {
     
     charCount.textContent = `${len.toLocaleString()} char${len === 1 ? '' : 's'}`;
     byteCount.textContent = `(${formatBytes(bytes)})`;
+    autoResize(inputText);
 }
 
 function formatBytes(bytes) {
@@ -238,6 +246,7 @@ function processCrypto(isEncrypting) {
         outputText.value = "Error: Input Data payload cannot be empty.";
         outputStatus.textContent = "Error";
         outputStatus.className = "output-status-chip";
+        autoResize(outputText);
         playSound('error');
         showToast("Please enter or paste input data.", true);
         return;
@@ -247,6 +256,7 @@ function processCrypto(isEncrypting) {
         outputText.value = "Error: Secret Key is required for cryptographic operations.";
         outputStatus.textContent = "Error";
         outputStatus.className = "output-status-chip";
+        autoResize(outputText);
         playSound('error');
         showToast("Secret key is missing.", true);
         secretKey.focus();
@@ -278,6 +288,7 @@ function processCrypto(isEncrypting) {
         outputText.value = "Error: Decryption failed. Invalid cipher payload, incorrect key, or mismatched algorithm.";
         outputStatus.textContent = "Decryption Failed";
         outputStatus.className = "output-status-chip";
+        autoResize(outputText);
         playSound('error');
         showToast("Decryption failed: check key and cipher payload", true);
     }
@@ -316,11 +327,13 @@ function animateScramble(finalText, element) {
             }
         }
         element.value = scrambled;
+        autoResize(element);
         
         currentIteration++;
         if (currentIteration > iterations) {
             clearInterval(interval);
             element.value = finalText;
+            autoResize(element);
         }
     }, 25);
 }
@@ -331,6 +344,7 @@ if (btnSample) {
         const randomSample = SAMPLES[Math.floor(Math.random() * SAMPLES.length)];
         inputText.value = randomSample;
         updateCounters();
+        autoResize(inputText);
         playSound('click');
         showToast("Sample text payload loaded");
     });
@@ -343,6 +357,7 @@ btnPaste.addEventListener('click', async () => {
         if (!text) throw new Error("Clipboard is empty");
         inputText.value = text;
         updateCounters();
+        autoResize(inputText);
         
         const originalHtml = btnPaste.innerHTML;
         btnPaste.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i> Pasted';
@@ -380,6 +395,8 @@ btnClear.addEventListener('click', () => {
     outputStatus.textContent = 'Idle';
     outputStatus.className = 'output-status-chip';
     updateCounters();
+    autoResize(inputText);
+    autoResize(outputText);
     playSound('click');
     showToast("Cleared input and output");
 });
@@ -395,6 +412,8 @@ btnSwap.addEventListener('click', () => {
     outputStatus.textContent = 'Idle';
     outputStatus.className = 'output-status-chip';
     updateCounters();
+    autoResize(inputText);
+    autoResize(outputText);
     playSound('swish');
     showToast("Payload moved to input");
 });
